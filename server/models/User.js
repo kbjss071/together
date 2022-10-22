@@ -14,9 +14,24 @@ const userSchema = new Schema (
             required: true,
             minlength: 6
         },
-        post: [Post.Schema],
-        donation: [Donation.Schema],
-        comment: [Commment.Schema]
+        post: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Post'
+            }
+        ],
+        donation: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Donation'
+            }
+        ],
+        comment: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Comment'
+            }
+        ]
     },
     {
         toJSON: {
@@ -44,3 +59,7 @@ userSchema.methods.isCorrectPassword = async function (password){
 userSchema.virtual('postCount').get(function(){
     return this.post.length;
 });
+
+const User = model('User', userSchema)
+
+module.exports = User;
