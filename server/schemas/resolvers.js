@@ -1,7 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User, Comment, Donation, Post } = require('../models');
 const { signToken } = require('../utils/auth');
-const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
 
 const resolvers = {
     Query: {
@@ -11,7 +10,10 @@ const resolvers = {
                     path: '',
                     populate: ''
                 })
+
+                return user
             }
+            throw new AuthenticationError('Not logged in')
         },
         posts: async(parent, { _id }) => {
             return await User.findById(_id).populate('Post')
@@ -48,20 +50,40 @@ const resolvers = {
 
             return {token, user}
         },
-        addPost: async() => {
+        addPost: async(parent, args, context) => {
+            if(context.user) {
+                const post = await Post.create(args)
 
-        },
-        addComment: async() => {
+                return await User.findByIdAndUpdate(context.user._id, args, { $push: {post: post}})
+            }
 
+            throw new AuthenticationError('Not logged in')
         },
-        addDonation: async() => {
+        addComment: async(parent, args, context) => {
+            if(context.user){
+                const comment = await Comment.create(args)
 
-        },
-        updatePost: async() => {
+                return await User.findByIdAndUpdate(context.user._id, args, {$push: {comment: comment}})
+            }
 
+            throw new AuthenticationError('Not logged in')
         },
-        updateComment: async() => {
-            
+        addDonation: async(parent, args, context) => {
+            if(context.user){
+                const donation = await Donation.create(args)
+
+                return await User.findByIdAndUpdate(context.user._id, args, { $push: {donation: donation}})
+            }
+
+            throw new AuthenticationError
+        },
+        updatePost: async(parent, {_id, title, content}) => {
+            return await Post.findByIdAndUpdate(_id, {title: title}, {content: content}, {new: true})
+        },
+        updateComment: async(parent, {_id, content}) => {
+            return await Comment.findByIdAndUpdate(_id, {content: content}, {new: true})
         }
     }
 }
+
+module.exports = resolvers

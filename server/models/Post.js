@@ -10,12 +10,23 @@ const postSchema = new Schema (
             type: String,
             required: true,
         },
-        user: [
+        comment: [
             {
                 type: Schema.Types.ObjectId,
-                ref: 'User'
+                ref: 'Comment'
+            }
+        ],
+        donation: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: 'Donation'
             }
         ]
+    },
+    {
+        toJSON: {
+            virtuals: true
+        }
     }
 )
 
