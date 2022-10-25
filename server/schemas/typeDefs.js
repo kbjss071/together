@@ -48,6 +48,8 @@ const typeDefs = gql`
         addPost(username: String!): Post
         addComment(username: String!, post: ID!): Comment
         addDonation(username: String!, post: ID!): Donation
+        updatePost(_id: ID!, post: ID!): Post
+        updateComment(_id: ID!, comment: ID!): Comment
     }
 `
 
