@@ -45,11 +45,11 @@ const typeDefs = gql`
     type Mutation {
         login(username: String!, password: String!): Auth
         addUser(username: String!, password: String!): Auth
-        addPost(username: String!): Post
-        addComment(username: String!, post: ID!): Comment
-        addDonation(username: String!, post: ID!): Donation
-        updatePost(_id: ID!, post: ID!): Post
-        updateComment(_id: ID!, comment: ID!): Comment
+        addPost(title: String!, content: String!): Post
+        addComment(postId: ID!, content: String!): Comment
+        addDonation(postId: ID!, amount: Float!): Donation
+        updatePost(_id: ID!, title: String!, content: String!): Post
+        updateComment(_id: ID!, content: String!): Comment
     }
 `
 

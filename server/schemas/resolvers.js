@@ -50,38 +50,52 @@ const resolvers = {
 
             return {token, user}
         },
-        addPost: async(parent, args, context) => {
+        addPost: async(parent, {title, content}, context) => {
             if(context.user) {
-                const post = await Post.create(args)
+                const post = await Post.create({title, content})
 
                 return await User.findByIdAndUpdate(context.user._id, args, { $push: {post: post}})
             }
 
             throw new AuthenticationError('Not logged in')
         },
-        addComment: async(parent, args, context) => {
+        addComment: async(parent, {postId, content}, context) => {
             if(context.user){
-                const comment = await Comment.create(args)
+                const comment = await Comment.create({content: content})
 
-                return await User.findByIdAndUpdate(context.user._id, args, {$push: {comment: comment}})
+                await Post.findByIdAndUpdate(postId, {$push: {comment: comment}})
+
+                return await User.findByIdAndUpdate(context.user._id, {$push: {comment: comment}})
             }
 
             throw new AuthenticationError('Not logged in')
         },
-        addDonation: async(parent, args, context) => {
+        addDonation: async(parent, {postId, amount}, context) => {
             if(context.user){
-                const donation = await Donation.create(args)
+                const donation = await Donation.create({amount: amount})
 
-                return await User.findByIdAndUpdate(context.user._id, args, { $push: {donation: donation}})
+                await Post.findByIdAndUpdate(postId, {$push: {donation: donation}})
+
+                return await User.findByIdAndUpdate(context.user._id, { $push: {donation: donation}})
             }
 
-            throw new AuthenticationError
+            throw new AuthenticationError('Not logged in')
         },
-        updatePost: async(parent, {_id, title, content}) => {
-            return await Post.findByIdAndUpdate(_id, {title: title}, {content: content}, {new: true})
+        updatePost: async(parent, {_id, title, content}, context) => {
+            if(context.user){
+                
+                return await Post.findByIdAndUpdate(_id, {title: title}, {content: content}, {new: true})
+            }
+
+            throw new AuthenticationError('Not logged in')
         },
-        updateComment: async(parent, {_id, content}) => {
-            return await Comment.findByIdAndUpdate(_id, {content: content}, {new: true})
+        updateComment: async(parent, {_id, content}, context) => {
+            if(context.user){
+
+                return await Comment.findByIdAndUpdate(_id, {content: content}, {new: true})
+            }
+
+            throw new AuthenticationError('Not logged in')
         }
     }
 }
