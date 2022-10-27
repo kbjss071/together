@@ -14,7 +14,6 @@ const typeDefs = gql`
         _id: ID!
         title: String
         content: String
-        user: User
     }
 
     type Donation {
