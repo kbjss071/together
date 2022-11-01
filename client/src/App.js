@@ -7,9 +7,11 @@ import {
   createHttpLink
 } from '@apollo/client'
 import {setContext} from '@apollo/client/link/context'
-import {Provider} from 'react-redux'
 import Nav from './components/Navbar/Nav'
 import Home from './pages/Home'
+import Login from './components/Login/Login'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap/dist/js/bootstrap.bundle.min";
 import './App.css';
 
 const httpLink = createHttpLink({
@@ -36,16 +38,17 @@ function App() {
     <ApolloProvider client={client}>
       <Router>
         <div>
-          <Provider>
             <Nav />
             <Routes>
               <Route
                 path="/"
                 element={<Home /> }
               />
+              <Route
+                path="/login"
+                element={<Login />}
+              />
             </Routes>
-
-          </Provider>
         </div>
       </Router>
     </ApolloProvider>
